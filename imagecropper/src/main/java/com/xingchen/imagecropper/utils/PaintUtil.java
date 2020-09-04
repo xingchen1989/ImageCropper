@@ -36,7 +36,6 @@ public class PaintUtil {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(resources.getDimension(R.dimen.border_thickness));
         paint.setColor(resources.getColor(R.color.border));
-
         return paint;
     }
 
@@ -49,7 +48,6 @@ public class PaintUtil {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(resources.getDimension(R.dimen.guideline_thickness));
         paint.setColor(resources.getColor(R.color.guideline));
-
         return paint;
     }
 
@@ -63,7 +61,6 @@ public class PaintUtil {
         final Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(resources.getColor(R.color.surrounding_area));
-
         return paint;
     }
 
@@ -76,7 +73,6 @@ public class PaintUtil {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(resources.getDimension(R.dimen.corner_thickness));
         paint.setColor(resources.getColor(R.color.corner));
-
         return paint;
     }
 }

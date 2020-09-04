@@ -39,12 +39,7 @@ class HorizontalHandleHelper extends HandleHelper {
     // HandleHelper Methods ////////////////////////////////////////////////////////////////////////
 
     @Override
-    void updateCropWindow(float x,
-                          float y,
-                          float targetAspectRatio,
-                          @NonNull RectF imageRect,
-                          float snapRadius) {
-
+    void updateCropWindow(float x, float y, float targetAspectRatio, float snapRadius, @NonNull RectF imageRect) {
         // Adjust this Edge accordingly.
         mEdge.adjustCoordinate(x, y, imageRect, snapRadius, targetAspectRatio);
 

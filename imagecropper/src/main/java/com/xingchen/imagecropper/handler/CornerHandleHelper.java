@@ -35,12 +35,7 @@ class CornerHandleHelper extends HandleHelper {
     // HandleHelper Methods ////////////////////////////////////////////////////////////////////////
 
     @Override
-    void updateCropWindow(float x,
-                          float y,
-                          float targetAspectRatio,
-                          @NonNull RectF imageRect,
-                          float snapRadius) {
-
+    void updateCropWindow(float x, float y, float targetAspectRatio, float snapRadius, @NonNull RectF imageRect) {
         final EdgePair activeEdges = getActiveEdges(x, y, targetAspectRatio);
         final Edge primaryEdge = activeEdges.primary;
         final Edge secondaryEdge = activeEdges.secondary;

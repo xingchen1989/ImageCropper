@@ -55,25 +55,25 @@ public class HandleUtil {
         Handle closestHandle = null;
         float closestDistance = Float.POSITIVE_INFINITY;
 
-        final float distanceToTopLeft = MathUtil.calculateDistance(x, y, left, top);
+        final float distanceToTopLeft = calculateDistance(x, y, left, top);
         if (distanceToTopLeft < closestDistance) {
             closestDistance = distanceToTopLeft;
             closestHandle = Handle.TOP_LEFT;
         }
 
-        final float distanceToTopRight = MathUtil.calculateDistance(x, y, right, top);
+        final float distanceToTopRight = calculateDistance(x, y, right, top);
         if (distanceToTopRight < closestDistance) {
             closestDistance = distanceToTopRight;
             closestHandle = Handle.TOP_RIGHT;
         }
 
-        final float distanceToBottomLeft = MathUtil.calculateDistance(x, y, left, bottom);
+        final float distanceToBottomLeft = calculateDistance(x, y, left, bottom);
         if (distanceToBottomLeft < closestDistance) {
             closestDistance = distanceToBottomLeft;
             closestHandle = Handle.BOTTOM_LEFT;
         }
 
-        final float distanceToBottomRight = MathUtil.calculateDistance(x, y, right, bottom);
+        final float distanceToBottomRight = calculateDistance(x, y, right, bottom);
         if (distanceToBottomRight < closestDistance) {
             closestDistance = distanceToBottomRight;
             closestHandle = Handle.BOTTOM_RIGHT;
@@ -123,7 +123,6 @@ public class HandleUtil {
 
         // Calculate the offset from the appropriate handle.
         switch (handle) {
-
             case TOP_LEFT:
                 touchOffsetX = left - x;
                 touchOffsetY = top - y;
@@ -214,7 +213,24 @@ public class HandleUtil {
         return (Math.abs(x - handleX) <= targetRadius && y > handleYStart && y < handleYEnd);
     }
 
-    private static boolean isWithinBounds(float x, float y, float left, float top, float right, float bottom) {
+    private static boolean isWithinBounds(float x,
+                                          float y,
+                                          float left,
+                                          float top,
+                                          float right,
+                                          float bottom) {
         return x >= left && x <= right && y >= top && y <= bottom;
+    }
+
+    /**
+     * Calculates the distance between two points (x1, y1) and (x2, y2).
+     */
+    private static float calculateDistance(float x1,
+                                           float y1,
+                                           float x2,
+                                           float y2) {
+        final float side1 = x2 - x1;
+        final float side2 = y2 - y1;
+        return (float) Math.sqrt(side1 * side1 + side2 * side2);
     }
 }

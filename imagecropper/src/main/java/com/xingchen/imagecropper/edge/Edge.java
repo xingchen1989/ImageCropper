@@ -142,91 +142,63 @@ public enum Edge {
         final float offset = edge.snapOffset(imageRect);
 
         switch (this) {
-
             case LEFT:
-
                 if (edge.equals(Edge.TOP)) {
-
                     final float top = imageRect.top;
                     final float bottom = Edge.BOTTOM.getCoordinate() - offset;
                     final float right = Edge.RIGHT.getCoordinate();
                     final float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
-
                 } else if (edge.equals(Edge.BOTTOM)) {
-
                     final float bottom = imageRect.bottom;
                     final float top = Edge.TOP.getCoordinate() - offset;
                     final float right = Edge.RIGHT.getCoordinate();
                     final float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
-
             case TOP:
-
                 if (edge.equals(Edge.LEFT)) {
-
                     final float left = imageRect.left;
                     final float right = Edge.RIGHT.getCoordinate() - offset;
                     final float bottom = Edge.BOTTOM.getCoordinate();
                     final float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
-
                 } else if (edge.equals(Edge.RIGHT)) {
-
                     final float right = imageRect.right;
                     final float left = Edge.LEFT.getCoordinate() - offset;
                     final float bottom = Edge.BOTTOM.getCoordinate();
                     final float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
-
             case RIGHT:
-
                 if (edge.equals(Edge.TOP)) {
-
                     final float top = imageRect.top;
                     final float bottom = Edge.BOTTOM.getCoordinate() - offset;
                     final float left = Edge.LEFT.getCoordinate();
                     final float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
-
                 } else if (edge.equals(Edge.BOTTOM)) {
-
                     final float bottom = imageRect.bottom;
                     final float top = Edge.TOP.getCoordinate() - offset;
                     final float left = Edge.LEFT.getCoordinate();
                     final float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
-
             case BOTTOM:
-
                 if (edge.equals(Edge.LEFT)) {
-
                     final float left = imageRect.left;
                     final float right = Edge.RIGHT.getCoordinate() - offset;
                     final float top = Edge.TOP.getCoordinate();
                     final float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
-
                 } else if (edge.equals(Edge.RIGHT)) {
-
                     final float right = imageRect.right;
                     final float left = Edge.LEFT.getCoordinate() - offset;
                     final float top = Edge.TOP.getCoordinate();
                     final float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
-
                     return isOutOfBounds(top, left, bottom, right, imageRect);
 
                 }
@@ -394,11 +366,8 @@ public enum Edge {
 
         // If close to the edge...
         if (imageRect.right - x < imageSnapRadius) {
-
             resultX = imageRect.right;
-
         } else {
-
             // Select the maximum of the three possible values to use
             float resultXHoriz = Float.NEGATIVE_INFINITY;
             float resultXVert = Float.NEGATIVE_INFINITY;
@@ -430,11 +399,8 @@ public enum Edge {
         final float resultY;
 
         if (y - imageRect.top < imageSnapRadius) {
-
             resultY = imageRect.top;
-
         } else {
-
             // Select the minimum of the three possible values to use
             float resultYVert = Float.POSITIVE_INFINITY;
             float resultYHoriz = Float.POSITIVE_INFINITY;
@@ -466,11 +432,8 @@ public enum Edge {
         final float resultY;
 
         if (imageRect.bottom - y < imageSnapRadius) {
-
             resultY = imageRect.bottom;
-
         } else {
-
             // Select the maximum of the three possible values to use
             float resultYVert = Float.NEGATIVE_INFINITY;
             float resultYHoriz = Float.NEGATIVE_INFINITY;

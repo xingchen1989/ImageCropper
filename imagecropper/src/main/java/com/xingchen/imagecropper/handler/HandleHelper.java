@@ -1,14 +1,14 @@
 /*
- * Copyright 2013, Edmodo, Inc. 
+ * Copyright 2013, Edmodo, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License.
  * You may obtain a copy of the License in the LICENSE file, or at:
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" 
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language 
- * governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
 package com.xingchen.imagecropper.handler;
@@ -61,11 +61,7 @@ abstract class HandleHelper {
      * @param snapRadius the maximum distance (in pixels) at which the crop window should snap to
      *                   the image
      */
-    void updateCropWindow(float x,
-                          float y,
-                          @NonNull RectF imageRect,
-                          float snapRadius) {
-
+    void updateCropWindow(float x, float y, float snapRadius, @NonNull RectF imageRect) {
         final EdgePair activeEdges = getActiveEdges();
         final Edge primaryEdge = activeEdges.primary;
         final Edge secondaryEdge = activeEdges.secondary;
@@ -88,11 +84,7 @@ abstract class HandleHelper {
      * @param snapRadius        the maximum distance (in pixels) at which the crop window should
      *                          snap to the image
      */
-    abstract void updateCropWindow(float x,
-                                   float y,
-                                   float targetAspectRatio,
-                                   @NonNull RectF imageRect,
-                                   float snapRadius);
+    abstract void updateCropWindow(float x, float y, float targetAspectRatio, float snapRadius, @NonNull RectF imageRect);
 
     /**
      * Gets the Edges associated with this handle (i.e. the Edges that should be moved when this
@@ -113,11 +105,9 @@ abstract class HandleHelper {
      * @param x                 the x-coordinate of the touch point
      * @param y                 the y-coordinate of the touch point
      * @param targetAspectRatio the aspect ratio that we are maintaining
-     *
      * @return the active edges as an ordered pair
      */
     EdgePair getActiveEdges(float x, float y, float targetAspectRatio) {
-
         // Calculate the aspect ratio if this handle were dragged to the given x-y coordinate.
         final float potentialAspectRatio = getAspectRatio(x, y);
 
@@ -140,11 +130,9 @@ abstract class HandleHelper {
      *
      * @param x the x-coordinate
      * @param y the y-coordinate
-     *
      * @return the aspect ratio
      */
     private float getAspectRatio(float x, float y) {
-
         // Replace the active edge coordinate with the given touch coordinate.
         final float left = (mVerticalEdge == Edge.LEFT) ? x : Edge.LEFT.getCoordinate();
         final float top = (mHorizontalEdge == Edge.TOP) ? y : Edge.TOP.getCoordinate();
