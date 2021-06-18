@@ -25,15 +25,10 @@ import com.xingchen.imagecropper.utils.AspectRatioUtil;
  */
 class VerticalHandleHelper extends HandleHelper {
 
-    // Member Variables ////////////////////////////////////////////////////////////////////////////
-
-    private Edge mEdge;
-
     // Constructor /////////////////////////////////////////////////////////////////////////////////
 
     VerticalHandleHelper(Edge edge) {
         super(null, edge);
-        mEdge = edge;
     }
 
     // HandleHelper Methods ////////////////////////////////////////////////////////////////////////
@@ -41,18 +36,18 @@ class VerticalHandleHelper extends HandleHelper {
     @Override
     void updateCropWindow(float x, float y, float targetAspectRatio, float snapRadius, @NonNull RectF imageRect) {
         // Adjust this Edge accordingly.
-        mEdge.adjustCoordinate(x, y, imageRect, snapRadius, targetAspectRatio);
+        mVerticalEdge.adjustCoordinate(x, y, imageRect, snapRadius, targetAspectRatio);
 
         float top = Edge.TOP.getCoordinate();
         float bottom = Edge.BOTTOM.getCoordinate();
 
         // After this Edge is moved, our crop window is now out of proportion.
-        final float targetHeight = AspectRatioUtil.calculateHeight(Edge.getWidth(), targetAspectRatio);
+        float targetHeight = AspectRatioUtil.calculateHeight(Edge.getWidth(), targetAspectRatio);
 
         // Adjust the crop window so that it maintains the given aspect ratio by
         // moving the adjacent edges symmetrically in or out.
-        final float difference = targetHeight - Edge.getHeight();
-        final float halfDifference = difference / 2;
+        float difference = targetHeight - Edge.getHeight();
+        float halfDifference = difference / 2;
         top -= halfDifference;
         bottom += halfDifference;
 
@@ -61,19 +56,15 @@ class VerticalHandleHelper extends HandleHelper {
 
         // Check if we have gone out of bounds on the top or bottom, and fix.
         if (Edge.TOP.isOutsideMargin(imageRect, snapRadius)
-                && !mEdge.isNewRectangleOutOfBounds(Edge.TOP, imageRect, targetAspectRatio)) {
-
-            final float offset = Edge.TOP.snapToRect(imageRect);
-            Edge.BOTTOM.offset(-offset);
-            mEdge.adjustCoordinate(targetAspectRatio);
+                && mVerticalEdge.isNewRectangleOutOfBounds(Edge.TOP, imageRect, targetAspectRatio)) {
+            Edge.BOTTOM.offset(-Edge.TOP.snapToRect(imageRect));
+            mVerticalEdge.adjustCoordinate(targetAspectRatio);
         }
 
         if (Edge.BOTTOM.isOutsideMargin(imageRect, snapRadius)
-                && !mEdge.isNewRectangleOutOfBounds(Edge.BOTTOM, imageRect, targetAspectRatio)) {
-
-            final float offset = Edge.BOTTOM.snapToRect(imageRect);
-            Edge.TOP.offset(-offset);
-            mEdge.adjustCoordinate(targetAspectRatio);
+                && mVerticalEdge.isNewRectangleOutOfBounds(Edge.BOTTOM, imageRect, targetAspectRatio)) {
+            Edge.TOP.offset(-Edge.BOTTOM.snapToRect(imageRect));
+            mVerticalEdge.adjustCoordinate(targetAspectRatio);
         }
     }
 }

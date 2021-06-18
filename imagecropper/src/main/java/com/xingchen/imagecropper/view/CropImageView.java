@@ -13,6 +13,7 @@
 
 package com.xingchen.imagecropper.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -86,16 +87,14 @@ public class CropImageView extends AppCompatImageView {
     private float mCornerLength;
 
     // The bounding box around the Bitmap that we are cropping.
-    @NonNull
-    private RectF mBitmapRect = new RectF();
+    private RectF mBitmapRect;
 
     // Holds the x and y offset between the exact touch location and the exact
     // handle location that is activated. There may be an offset because we
     // allow for some leeway (specified by 'mHandleRadius') in activating a
     // handle. However, we want to maintain these offset values while the handle
     // is being dragged so that the handle doesn't jump.
-    @NonNull
-    private PointF mTouchOffset = new PointF();
+    private PointF mTouchOffset;
 
     // The Handle that is currently pressed; null if no Handle is pressed.
     private Handle mPressedHandle;
@@ -113,13 +112,11 @@ public class CropImageView extends AppCompatImageView {
     // Constructors ////////////////////////////////////////////////////////////////////////////////
 
     public CropImageView(Context context) {
-        super(context);
-        init(context, null);
+        this(context, null);
     }
 
     public CropImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+        this(context, attrs, 0);
     }
 
     public CropImageView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -128,15 +125,10 @@ public class CropImageView extends AppCompatImageView {
     }
 
     private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
-        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CropImageView, 0, 0);
-        mGuidelinesMode = typedArray.getInteger(R.styleable.CropImageView_guidelines, 1);
-        mFixAspectRatio = typedArray.getBoolean(R.styleable.CropImageView_fixAspectRatio, false);
-        mAspectRatioX = typedArray.getInteger(R.styleable.CropImageView_aspectRatioX, 1);
-        mAspectRatioY = typedArray.getInteger(R.styleable.CropImageView_aspectRatioY, 1);
-        typedArray.recycle();
+        mBitmapRect = new RectF();
+        mTouchOffset = new PointF();
 
-        final Resources resources = context.getResources();
-
+        Resources resources = context.getResources();
         mBorderPaint = PaintUtil.newBorderPaint(resources);
         mGuidelinePaint = PaintUtil.newGuidelinePaint(resources);
         mCornerPaint = PaintUtil.newCornerPaint(resources);
@@ -147,6 +139,13 @@ public class CropImageView extends AppCompatImageView {
         mBorderThickness = resources.getDimension(R.dimen.border_thickness);
         mCornerThickness = resources.getDimension(R.dimen.corner_thickness);
         mCornerLength = resources.getDimension(R.dimen.corner_length);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CropImageView, 0, 0);
+        mGuidelinesMode = typedArray.getInteger(R.styleable.CropImageView_guidelines, 1);
+        mFixAspectRatio = typedArray.getBoolean(R.styleable.CropImageView_fixAspectRatio, false);
+        mAspectRatioX = typedArray.getInteger(R.styleable.CropImageView_aspectRatioX, 1);
+        mAspectRatioY = typedArray.getInteger(R.styleable.CropImageView_aspectRatioY, 1);
+        typedArray.recycle();
     }
 
     // View Methods ////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +153,6 @@ public class CropImageView extends AppCompatImageView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-
         mBitmapRect = getBitmapRect();
         initCropWindow(mBitmapRect);
     }
@@ -162,36 +160,28 @@ public class CropImageView extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         drawDarkenedSurroundingArea(canvas);
         drawGuidelines(canvas);
         drawBorder(canvas);
         drawCorners(canvas);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // If this View is not enabled, don't allow for touch interactions.
-        if (!isEnabled()) {
-            return false;
-        }
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 onActionDown(event.getX(), event.getY());
                 return true;
-
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 getParent().requestDisallowInterceptTouchEvent(false);
                 onActionUp();
                 return true;
-
             case MotionEvent.ACTION_MOVE:
                 onActionMove(event.getX(), event.getY());
                 getParent().requestDisallowInterceptTouchEvent(true);
                 return true;
-
             default:
                 return false;
         }
@@ -237,7 +227,6 @@ public class CropImageView extends AppCompatImageView {
         }
         mAspectRatioX = aspectRatioX;
         mAspectRatioY = aspectRatioY;
-
         if (mFixAspectRatio) {
             requestLayout(); // Request measure/layout to be run again.
         }
@@ -250,36 +239,36 @@ public class CropImageView extends AppCompatImageView {
      */
     public Bitmap getCroppedImage() {
         // Implementation reference: http://stackoverflow.com/a/26930938/1068656
-        final Drawable drawable = getDrawable();
+        Drawable drawable = getDrawable();
         if (!(drawable instanceof BitmapDrawable)) {
             return null;
         }
 
         // Get image matrix values and place them in an array.
-        final float[] matrixValues = new float[9];
+        float[] matrixValues = new float[9];
         getImageMatrix().getValues(matrixValues);
 
         // Extract the scale and translation values. Note, we currently do not handle any other transformations (e.g. skew).
-        final float scaleX = matrixValues[Matrix.MSCALE_X];
-        final float scaleY = matrixValues[Matrix.MSCALE_Y];
-        final float transX = matrixValues[Matrix.MTRANS_X];
-        final float transY = matrixValues[Matrix.MTRANS_Y];
+        float scaleX = matrixValues[Matrix.MSCALE_X];
+        float scaleY = matrixValues[Matrix.MSCALE_Y];
+        float transX = matrixValues[Matrix.MTRANS_X];
+        float transY = matrixValues[Matrix.MTRANS_Y];
 
         // Ensure that the left and top edges are not outside of the ImageView bounds.
-        final float bitmapLeft = (transX < 0) ? Math.abs(transX) : 0;
-        final float bitmapTop = (transY < 0) ? Math.abs(transY) : 0;
+        float bitmapLeft = (transX < 0) ? Math.abs(transX) : 0;
+        float bitmapTop = (transY < 0) ? Math.abs(transY) : 0;
 
         // Get the original bitmap object.
-        final Bitmap originalBitmap = ((BitmapDrawable) drawable).getBitmap();
+        Bitmap originalBitmap = ((BitmapDrawable) drawable).getBitmap();
 
         // Calculate the top-left corner of the crop window relative to the ~original~ bitmap size.
-        final float cropX = (bitmapLeft + Edge.LEFT.getCoordinate()) / scaleX;
-        final float cropY = (bitmapTop + Edge.TOP.getCoordinate()) / scaleY;
+        float cropX = (bitmapLeft + Edge.LEFT.getCoordinate()) / scaleX;
+        float cropY = (bitmapTop + Edge.TOP.getCoordinate()) / scaleY;
 
         // Calculate the crop window size relative to the ~original~ bitmap size.
         // Make sure the right and bottom edges are not outside the ImageView bounds (this is just to address rounding discrepancies).
-        final float cropWidth = Math.min(Edge.getWidth() / scaleX, originalBitmap.getWidth() - cropX);
-        final float cropHeight = Math.min(Edge.getHeight() / scaleY, originalBitmap.getHeight() - cropY);
+        float cropWidth = Math.min(Edge.getWidth() / scaleX, originalBitmap.getWidth() - cropX);
+        float cropHeight = Math.min(Edge.getHeight() / scaleY, originalBitmap.getHeight() - cropY);
 
         // Crop the subset from the original Bitmap.
         return Bitmap.createBitmap(originalBitmap,
@@ -295,34 +284,33 @@ public class CropImageView extends AppCompatImageView {
      * Gets the bounding rectangle of the bitmap within the ImageView.
      */
     private RectF getBitmapRect() {
-        final Drawable drawable = getDrawable();
+        Drawable drawable = getDrawable();
         if (drawable == null) {
             return new RectF();
         }
-
         // Get image matrix values and place them in an array.
-        final float[] matrixValues = new float[9];
+        float[] matrixValues = new float[9];
         getImageMatrix().getValues(matrixValues);
 
         // Extract the scale and translation values from the matrix.
-        final float scaleX = matrixValues[Matrix.MSCALE_X];
-        final float scaleY = matrixValues[Matrix.MSCALE_Y];
-        final float transX = matrixValues[Matrix.MTRANS_X];
-        final float transY = matrixValues[Matrix.MTRANS_Y];
+        float scaleX = matrixValues[Matrix.MSCALE_X];
+        float scaleY = matrixValues[Matrix.MSCALE_Y];
+        float transX = matrixValues[Matrix.MTRANS_X];
+        float transY = matrixValues[Matrix.MTRANS_Y];
 
         // Get the width and height of the original bitmap.
-        final int drawableIntrinsicWidth = drawable.getIntrinsicWidth();
-        final int drawableIntrinsicHeight = drawable.getIntrinsicHeight();
+        int drawableIntrinsicWidth = drawable.getIntrinsicWidth();
+        int drawableIntrinsicHeight = drawable.getIntrinsicHeight();
 
         // Calculate the dimensions as seen on screen.
-        final int drawableDisplayWidth = Math.round(drawableIntrinsicWidth * scaleX);
-        final int drawableDisplayHeight = Math.round(drawableIntrinsicHeight * scaleY);
+        int drawableDisplayWidth = Math.round(drawableIntrinsicWidth * scaleX);
+        int drawableDisplayHeight = Math.round(drawableIntrinsicHeight * scaleY);
 
         // Get the Rect of the displayed image within the ImageView.
-        final float left = Math.max(transX, 0);
-        final float top = Math.max(transY, 0);
-        final float right = Math.min(left + drawableDisplayWidth, getWidth());
-        final float bottom = Math.min(top + drawableDisplayHeight, getHeight());
+        float left = Math.max(transX, 0);
+        float top = Math.max(transY, 0);
+        float right = Math.min(left + drawableDisplayWidth, getWidth());
+        float bottom = Math.min(top + drawableDisplayHeight, getHeight());
 
         return new RectF(left, top, right, bottom);
     }
@@ -340,9 +328,8 @@ public class CropImageView extends AppCompatImageView {
             initCropWindowWithFixedAspectRatio(bitmapRect);
         } else {
             // Initialize crop window to have 10% padding w/ respect to Drawable's bounds.
-            final float horizontalPadding = 0.1f * bitmapRect.width();
-            final float verticalPadding = 0.1f * bitmapRect.height();
-
+            float horizontalPadding = 0.1f * bitmapRect.width();
+            float verticalPadding = 0.1f * bitmapRect.height();
             Edge.LEFT.setCoordinate(bitmapRect.left + horizontalPadding);
             Edge.TOP.setCoordinate(bitmapRect.top + verticalPadding);
             Edge.RIGHT.setCoordinate(bitmapRect.right - horizontalPadding);
@@ -354,15 +341,13 @@ public class CropImageView extends AppCompatImageView {
         // If the image aspect ratio is wider than the crop aspect ratio,
         // then the image height is the determining initial length. Else, vice-versa.
         if (AspectRatioUtil.calculateAspectRatio(bitmapRect) > getTargetAspectRatio()) {
-            final float cropWidth = AspectRatioUtil.calculateWidth(bitmapRect.height(), getTargetAspectRatio());
-
+            float cropWidth = AspectRatioUtil.calculateWidth(bitmapRect.height(), getTargetAspectRatio());
             Edge.LEFT.setCoordinate(bitmapRect.centerX() - cropWidth / 2f);
             Edge.TOP.setCoordinate(bitmapRect.top);
             Edge.RIGHT.setCoordinate(bitmapRect.centerX() + cropWidth / 2f);
             Edge.BOTTOM.setCoordinate(bitmapRect.bottom);
         } else {
-            final float cropHeight = AspectRatioUtil.calculateHeight(bitmapRect.width(), getTargetAspectRatio());
-
+            float cropHeight = AspectRatioUtil.calculateHeight(bitmapRect.width(), getTargetAspectRatio());
             Edge.LEFT.setCoordinate(bitmapRect.left);
             Edge.TOP.setCoordinate(bitmapRect.centerY() - cropHeight / 2f);
             Edge.RIGHT.setCoordinate(bitmapRect.right);
@@ -371,12 +356,10 @@ public class CropImageView extends AppCompatImageView {
     }
 
     private void drawDarkenedSurroundingArea(@NonNull Canvas canvas) {
-        final RectF bitmapRect = mBitmapRect;
-
-        final float left = Edge.LEFT.getCoordinate();
-        final float top = Edge.TOP.getCoordinate();
-        final float right = Edge.RIGHT.getCoordinate();
-        final float bottom = Edge.BOTTOM.getCoordinate();
+        float left = Edge.LEFT.getCoordinate();
+        float top = Edge.TOP.getCoordinate();
+        float right = Edge.RIGHT.getCoordinate();
+        float bottom = Edge.BOTTOM.getCoordinate();
 
         /*-
           -------------------------------------
@@ -393,37 +376,10 @@ public class CropImageView extends AppCompatImageView {
          */
 
         // Draw "top", "bottom", "left", then "right" quadrants according to diagram above.
-        canvas.drawRect(bitmapRect.left, bitmapRect.top, bitmapRect.right, top, mSurroundingAreaOverlayPaint);
-        canvas.drawRect(bitmapRect.left, bottom, bitmapRect.right, bitmapRect.bottom, mSurroundingAreaOverlayPaint);
-        canvas.drawRect(bitmapRect.left, top, left, bottom, mSurroundingAreaOverlayPaint);
-        canvas.drawRect(right, top, bitmapRect.right, bottom, mSurroundingAreaOverlayPaint);
-    }
-
-    private void drawGuidelines(@NonNull Canvas canvas) {
-        if (!shouldGuidelinesBeShown()) {
-            return;
-        }
-
-        final float left = Edge.LEFT.getCoordinate();
-        final float top = Edge.TOP.getCoordinate();
-        final float right = Edge.RIGHT.getCoordinate();
-        final float bottom = Edge.BOTTOM.getCoordinate();
-
-        // Draw vertical guidelines.
-        final float oneThirdCropWidth = Edge.getWidth() / 3;
-
-        final float x1 = left + oneThirdCropWidth;
-        canvas.drawLine(x1, top, x1, bottom, mGuidelinePaint);
-        final float x2 = right - oneThirdCropWidth;
-        canvas.drawLine(x2, top, x2, bottom, mGuidelinePaint);
-
-        // Draw horizontal guidelines.
-        final float oneThirdCropHeight = Edge.getHeight() / 3;
-
-        final float y1 = top + oneThirdCropHeight;
-        canvas.drawLine(left, y1, right, y1, mGuidelinePaint);
-        final float y2 = bottom - oneThirdCropHeight;
-        canvas.drawLine(left, y2, right, y2, mGuidelinePaint);
+        canvas.drawRect(mBitmapRect.left, mBitmapRect.top, mBitmapRect.right, top, mSurroundingAreaOverlayPaint);
+        canvas.drawRect(mBitmapRect.left, bottom, mBitmapRect.right, mBitmapRect.bottom, mSurroundingAreaOverlayPaint);
+        canvas.drawRect(mBitmapRect.left, top, left, bottom, mSurroundingAreaOverlayPaint);
+        canvas.drawRect(right, top, mBitmapRect.right, bottom, mSurroundingAreaOverlayPaint);
     }
 
     private void drawBorder(@NonNull Canvas canvas) {
@@ -434,16 +390,39 @@ public class CropImageView extends AppCompatImageView {
                 mBorderPaint);
     }
 
+    private void drawGuidelines(@NonNull Canvas canvas) {
+        if (shouldGuidelinesBeShown()) {
+            float left = Edge.LEFT.getCoordinate();
+            float top = Edge.TOP.getCoordinate();
+            float right = Edge.RIGHT.getCoordinate();
+            float bottom = Edge.BOTTOM.getCoordinate();
+
+            // Draw vertical guidelines.
+            float oneThirdCropWidth = Edge.getWidth() / 3;
+            float x1 = left + oneThirdCropWidth;
+            float x2 = right - oneThirdCropWidth;
+            canvas.drawLine(x1, top, x1, bottom, mGuidelinePaint);
+            canvas.drawLine(x2, top, x2, bottom, mGuidelinePaint);
+
+            // Draw horizontal guidelines.
+            float oneThirdCropHeight = Edge.getHeight() / 3;
+            float y1 = top + oneThirdCropHeight;
+            float y2 = bottom - oneThirdCropHeight;
+            canvas.drawLine(left, y1, right, y1, mGuidelinePaint);
+            canvas.drawLine(left, y2, right, y2, mGuidelinePaint);
+        }
+    }
+
     private void drawCorners(@NonNull Canvas canvas) {
-        final float left = Edge.LEFT.getCoordinate();
-        final float top = Edge.TOP.getCoordinate();
-        final float right = Edge.RIGHT.getCoordinate();
-        final float bottom = Edge.BOTTOM.getCoordinate();
+        float left = Edge.LEFT.getCoordinate();
+        float top = Edge.TOP.getCoordinate();
+        float right = Edge.RIGHT.getCoordinate();
+        float bottom = Edge.BOTTOM.getCoordinate();
 
         // Absolute value of the offset by which to draw the corner line such that its inner edge is flush with the border's inner edge.
-        final float lateralOffset = (mCornerThickness - mBorderThickness) / 2f;
+        float lateralOffset = (mCornerThickness - mBorderThickness) / 2f;
         // Absolute value of the offset by which to start the corner line such that the line is drawn all the way to form a corner edge with the adjacent side.
-        final float startOffset = mCornerThickness - (mBorderThickness / 2f);
+        float startOffset = mCornerThickness - (mBorderThickness / 2f);
 
         // Top-left corner: left side
         canvas.drawLine(left - lateralOffset, top - startOffset, left - lateralOffset, top + mCornerLength, mCornerPaint);
@@ -482,10 +461,10 @@ public class CropImageView extends AppCompatImageView {
      * @param y the y-coordinate of the down action
      */
     private void onActionDown(float x, float y) {
-        final float left = Edge.LEFT.getCoordinate();
-        final float top = Edge.TOP.getCoordinate();
-        final float right = Edge.RIGHT.getCoordinate();
-        final float bottom = Edge.BOTTOM.getCoordinate();
+        float left = Edge.LEFT.getCoordinate();
+        float top = Edge.TOP.getCoordinate();
+        float right = Edge.RIGHT.getCoordinate();
+        float bottom = Edge.BOTTOM.getCoordinate();
 
         mPressedHandle = HandleUtil.getPressedHandle(x, y, left, top, right, bottom, mHandleRadius);
 
@@ -504,22 +483,20 @@ public class CropImageView extends AppCompatImageView {
      * @param y the y-coordinate of the move event
      */
     private void onActionMove(float x, float y) {
-        if (mPressedHandle == null) {
-            return;
-        }
+        if (mPressedHandle != null) {
+            // Adjust the coordinates for the finger position's offset (i.e. the distance from the initial touch to the precise handle location).
+            // We want to maintain the initial touch's distance to the pressed handle so that the crop window size does not "jump".
+            x += mTouchOffset.x;
+            y += mTouchOffset.y;
 
-        // Adjust the coordinates for the finger position's offset (i.e. the distance from the initial touch to the precise handle location).
-        // We want to maintain the initial touch's distance to the pressed handle so that the crop window size does not "jump".
-        x += mTouchOffset.x;
-        y += mTouchOffset.y;
-
-        // Calculate the new crop window size/position.
-        if (mFixAspectRatio) {
-            mPressedHandle.updateCropWindow(x, y, getTargetAspectRatio(), mSnapRadius, mBitmapRect);
-        } else {
-            mPressedHandle.updateCropWindow(x, y, mSnapRadius, mBitmapRect);
+            // Calculate the new crop window size/position.
+            if (mFixAspectRatio) {
+                mPressedHandle.updateCropWindow(x, y, getTargetAspectRatio(), mSnapRadius, mBitmapRect);
+            } else {
+                mPressedHandle.updateCropWindow(x, y, mSnapRadius, mBitmapRect);
+            }
+            invalidate();
         }
-        invalidate();
     }
 
     /**

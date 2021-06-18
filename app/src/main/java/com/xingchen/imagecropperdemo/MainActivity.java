@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView aspectRatioYTextView = (TextView) findViewById(R.id.aspectRatioY);
         final SeekBar aspectRatioYSeekBar = (SeekBar) findViewById(R.id.aspectRatioYSeek);
         final Spinner guidelinesSpinner = (Spinner) findViewById(R.id.showGuidelinesSpin);
-        final CropImageView cropImageView = (CropImageView) findViewById(R.id.CropImageView);
+        final CropImageView cropImageView = (CropImageView) findViewById(R.id.cropImageView);
         final ImageView croppedImageView = (ImageView) findViewById(R.id.croppedImageView);
         final Button cropButton = (Button) findViewById(R.id.Button_crop);
 

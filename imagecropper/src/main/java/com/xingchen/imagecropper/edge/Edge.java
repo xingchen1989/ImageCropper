@@ -23,7 +23,6 @@ import com.xingchen.imagecropper.utils.AspectRatioUtil;
  * Enum representing an edge in the crop window.
  */
 public enum Edge {
-
     LEFT,
     TOP,
     RIGHT,
@@ -82,7 +81,6 @@ public enum Edge {
      * @param imageSnapRadius the radius (in pixels) at which the edge should snap to the image
      */
     public void adjustCoordinate(float x, float y, @NonNull RectF imageRect, float imageSnapRadius, float aspectRatio) {
-
         switch (this) {
             case LEFT:
                 mCoordinate = adjustLeft(x, imageRect, imageSnapRadius, aspectRatio);
@@ -106,12 +104,10 @@ public enum Edge {
      * @param aspectRatio the aspect ratio to achieve
      */
     public void adjustCoordinate(float aspectRatio) {
-
-        final float left = Edge.LEFT.getCoordinate();
-        final float top = Edge.TOP.getCoordinate();
-        final float right = Edge.RIGHT.getCoordinate();
-        final float bottom = Edge.BOTTOM.getCoordinate();
-
+        float left = Edge.LEFT.getCoordinate();
+        float top = Edge.TOP.getCoordinate();
+        float right = Edge.RIGHT.getCoordinate();
+        float bottom = Edge.BOTTOM.getCoordinate();
         switch (this) {
             case LEFT:
                 mCoordinate = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
@@ -138,73 +134,71 @@ public enum Edge {
      * @return whether or not the new image would be out of bounds.
      */
     public boolean isNewRectangleOutOfBounds(@NonNull Edge edge, @NonNull RectF imageRect, float aspectRatio) {
-
-        final float offset = edge.snapOffset(imageRect);
-
+        float offset = edge.snapOffset(imageRect);
         switch (this) {
             case LEFT:
                 if (edge.equals(Edge.TOP)) {
-                    final float top = imageRect.top;
-                    final float bottom = Edge.BOTTOM.getCoordinate() - offset;
-                    final float right = Edge.RIGHT.getCoordinate();
-                    final float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
+                    float top = imageRect.top;
+                    float bottom = Edge.BOTTOM.getCoordinate() - offset;
+                    float right = Edge.RIGHT.getCoordinate();
+                    float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 } else if (edge.equals(Edge.BOTTOM)) {
-                    final float bottom = imageRect.bottom;
-                    final float top = Edge.TOP.getCoordinate() - offset;
-                    final float right = Edge.RIGHT.getCoordinate();
-                    final float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
+                    float bottom = imageRect.bottom;
+                    float top = Edge.TOP.getCoordinate() - offset;
+                    float right = Edge.RIGHT.getCoordinate();
+                    float left = AspectRatioUtil.calculateLeft(top, right, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
             case TOP:
                 if (edge.equals(Edge.LEFT)) {
-                    final float left = imageRect.left;
-                    final float right = Edge.RIGHT.getCoordinate() - offset;
-                    final float bottom = Edge.BOTTOM.getCoordinate();
-                    final float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
+                    float left = imageRect.left;
+                    float right = Edge.RIGHT.getCoordinate() - offset;
+                    float bottom = Edge.BOTTOM.getCoordinate();
+                    float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 } else if (edge.equals(Edge.RIGHT)) {
-                    final float right = imageRect.right;
-                    final float left = Edge.LEFT.getCoordinate() - offset;
-                    final float bottom = Edge.BOTTOM.getCoordinate();
-                    final float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
+                    float right = imageRect.right;
+                    float left = Edge.LEFT.getCoordinate() - offset;
+                    float bottom = Edge.BOTTOM.getCoordinate();
+                    float top = AspectRatioUtil.calculateTop(left, right, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
             case RIGHT:
                 if (edge.equals(Edge.TOP)) {
-                    final float top = imageRect.top;
-                    final float bottom = Edge.BOTTOM.getCoordinate() - offset;
-                    final float left = Edge.LEFT.getCoordinate();
-                    final float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
+                    float top = imageRect.top;
+                    float bottom = Edge.BOTTOM.getCoordinate() - offset;
+                    float left = Edge.LEFT.getCoordinate();
+                    float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 } else if (edge.equals(Edge.BOTTOM)) {
-                    final float bottom = imageRect.bottom;
-                    final float top = Edge.TOP.getCoordinate() - offset;
-                    final float left = Edge.LEFT.getCoordinate();
-                    final float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
+                    float bottom = imageRect.bottom;
+                    float top = Edge.TOP.getCoordinate() - offset;
+                    float left = Edge.LEFT.getCoordinate();
+                    float right = AspectRatioUtil.calculateRight(left, top, bottom, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 }
                 break;
             case BOTTOM:
                 if (edge.equals(Edge.LEFT)) {
-                    final float left = imageRect.left;
-                    final float right = Edge.RIGHT.getCoordinate() - offset;
-                    final float top = Edge.TOP.getCoordinate();
-                    final float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
+                    float left = imageRect.left;
+                    float right = Edge.RIGHT.getCoordinate() - offset;
+                    float top = Edge.TOP.getCoordinate();
+                    float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
                 } else if (edge.equals(Edge.RIGHT)) {
-                    final float right = imageRect.right;
-                    final float left = Edge.LEFT.getCoordinate() - offset;
-                    final float top = Edge.TOP.getCoordinate();
-                    final float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
+                    float right = imageRect.right;
+                    float left = Edge.LEFT.getCoordinate() - offset;
+                    float top = Edge.TOP.getCoordinate();
+                    float bottom = AspectRatioUtil.calculateBottom(left, top, right, aspectRatio);
                     return isOutOfBounds(top, left, bottom, right, imageRect);
 
                 }
                 break;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -214,7 +208,7 @@ public enum Edge {
      * @return whether it would be out of bounds
      */
     private boolean isOutOfBounds(float top, float left, float bottom, float right, @NonNull RectF imageRect) {
-        return (top < imageRect.top || left < imageRect.left || bottom > imageRect.bottom || right > imageRect.right);
+        return ((top > imageRect.top) && (left > imageRect.left) && (bottom < imageRect.bottom) && (right < imageRect.right));
     }
 
     /**
@@ -225,9 +219,7 @@ public enum Edge {
      * minus the old coordinate value)
      */
     public float snapToRect(@NonNull RectF imageRect) {
-
-        final float oldCoordinate = mCoordinate;
-
+        float oldCoordinate = mCoordinate;
         switch (this) {
             case LEFT:
                 mCoordinate = imageRect.left;
@@ -242,7 +234,6 @@ public enum Edge {
                 mCoordinate = imageRect.bottom;
                 break;
         }
-
         return mCoordinate - oldCoordinate;
     }
 
@@ -254,10 +245,8 @@ public enum Edge {
      * minus the old coordinate value)
      */
     public float snapOffset(@NonNull RectF imageRect) {
-
-        final float oldCoordinate = mCoordinate;
-        final float newCoordinate;
-
+        float oldCoordinate = mCoordinate;
+        float newCoordinate;
         switch (this) {
             case LEFT:
                 newCoordinate = imageRect.left;
@@ -272,7 +261,6 @@ public enum Edge {
                 newCoordinate = imageRect.bottom;
                 break;
         }
-
         return newCoordinate - oldCoordinate;
     }
 
@@ -296,9 +284,7 @@ public enum Edge {
      * is outside the inner "margin" frame.
      */
     public boolean isOutsideMargin(@NonNull RectF rect, float margin) {
-
         final boolean result;
-
         switch (this) {
             case LEFT:
                 result = mCoordinate - rect.left < margin;
@@ -328,25 +314,23 @@ public enum Edge {
      * @return the actual x-position of the left edge
      */
     private static float adjustLeft(float x, @NonNull RectF imageRect, float imageSnapRadius, float aspectRatio) {
-
         final float resultX;
-
         if (x - imageRect.left < imageSnapRadius) {
             resultX = imageRect.left;
         } else {
             // Select the minimum of the three possible values to use
-            float resultXHoriz = Float.POSITIVE_INFINITY;
-            float resultXVert = Float.POSITIVE_INFINITY;
+            float resultXHor = Float.POSITIVE_INFINITY;
+            float resultXVer = Float.POSITIVE_INFINITY;
 
             // Checks if the window is too small horizontally
             if (x >= Edge.RIGHT.getCoordinate() - MIN_CROP_LENGTH_PX) {
-                resultXHoriz = Edge.RIGHT.getCoordinate() - MIN_CROP_LENGTH_PX;
+                resultXHor = Edge.RIGHT.getCoordinate() - MIN_CROP_LENGTH_PX;
             }
             // Checks if the window is too small vertically
             if (((Edge.RIGHT.getCoordinate() - x) / aspectRatio) <= MIN_CROP_LENGTH_PX) {
-                resultXVert = Edge.RIGHT.getCoordinate() - (MIN_CROP_LENGTH_PX * aspectRatio);
+                resultXVer = Edge.RIGHT.getCoordinate() - (MIN_CROP_LENGTH_PX * aspectRatio);
             }
-            resultX = Math.min(x, Math.min(resultXHoriz, resultXVert));
+            resultX = Math.min(x, Math.min(resultXHor, resultXVer));
         }
         return resultX;
     }
@@ -361,26 +345,24 @@ public enum Edge {
      * @return the actual x-position of the right edge
      */
     private static float adjustRight(float x, @NonNull RectF imageRect, float imageSnapRadius, float aspectRatio) {
-
         final float resultX;
-
         // If close to the edge...
         if (imageRect.right - x < imageSnapRadius) {
             resultX = imageRect.right;
         } else {
             // Select the maximum of the three possible values to use
-            float resultXHoriz = Float.NEGATIVE_INFINITY;
-            float resultXVert = Float.NEGATIVE_INFINITY;
+            float resultXHor = Float.NEGATIVE_INFINITY;
+            float resultXVer = Float.NEGATIVE_INFINITY;
 
             // Checks if the window is too small horizontally
             if (x <= Edge.LEFT.getCoordinate() + MIN_CROP_LENGTH_PX) {
-                resultXHoriz = Edge.LEFT.getCoordinate() + MIN_CROP_LENGTH_PX;
+                resultXHor = Edge.LEFT.getCoordinate() + MIN_CROP_LENGTH_PX;
             }
             // Checks if the window is too small vertically
             if (((x - Edge.LEFT.getCoordinate()) / aspectRatio) <= MIN_CROP_LENGTH_PX) {
-                resultXVert = Edge.LEFT.getCoordinate() + (MIN_CROP_LENGTH_PX * aspectRatio);
+                resultXVer = Edge.LEFT.getCoordinate() + (MIN_CROP_LENGTH_PX * aspectRatio);
             }
-            resultX = Math.max(x, Math.max(resultXHoriz, resultXVert));
+            resultX = Math.max(x, Math.max(resultXHor, resultXVer));
         }
         return resultX;
     }
@@ -395,9 +377,7 @@ public enum Edge {
      * @return the actual y-position of the top edge
      */
     private static float adjustTop(float y, @NonNull RectF imageRect, float imageSnapRadius, float aspectRatio) {
-
-        final float resultY;
-
+        float resultY;
         if (y - imageRect.top < imageSnapRadius) {
             resultY = imageRect.top;
         } else {
@@ -428,9 +408,7 @@ public enum Edge {
      * @return the actual y-position of the bottom edge
      */
     private static float adjustBottom(float y, @NonNull RectF imageRect, float imageSnapRadius, float aspectRatio) {
-
-        final float resultY;
-
+        float resultY;
         if (imageRect.bottom - y < imageSnapRadius) {
             resultY = imageRect.bottom;
         } else {

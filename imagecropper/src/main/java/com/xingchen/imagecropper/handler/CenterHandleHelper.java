@@ -25,13 +25,11 @@ import com.xingchen.imagecropper.edge.Edge;
 class CenterHandleHelper extends HandleHelper {
 
     // Constructor /////////////////////////////////////////////////////////////////////////////////
-
     CenterHandleHelper() {
         super(null, null);
     }
 
     // HandleHelper Methods ////////////////////////////////////////////////////////////////////////
-
     @Override
     void updateCropWindow(float x, float y, float snapRadius, @NonNull RectF imageRect) {
         float left = Edge.LEFT.getCoordinate();
@@ -39,11 +37,8 @@ class CenterHandleHelper extends HandleHelper {
         float right = Edge.RIGHT.getCoordinate();
         float bottom = Edge.BOTTOM.getCoordinate();
 
-        final float currentCenterX = (left + right) / 2;
-        final float currentCenterY = (top + bottom) / 2;
-
-        final float offsetX = x - currentCenterX;
-        final float offsetY = y - currentCenterY;
+        float offsetX = x - (left + right) / 2;
+        float offsetY = y - (top + bottom) / 2;
 
         // Adjust the crop window.
         Edge.LEFT.offset(offsetX);
