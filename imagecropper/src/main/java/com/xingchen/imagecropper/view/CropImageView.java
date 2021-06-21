@@ -255,15 +255,17 @@ public class CropImageView extends AppCompatImageView {
         float transY = matrixValues[Matrix.MTRANS_Y];
 
         // Ensure that the left and top edges are not outside of the ImageView bounds.
-        float bitmapLeft = (transX < 0) ? Math.abs(transX) : 0;
-        float bitmapTop = (transY < 0) ? Math.abs(transY) : 0;
+//        float bitmapLeft = (transX < 0) ? Math.abs(transX) : 0;
+//        float bitmapTop = (transY < 0) ? Math.abs(transY) : 0;
 
         // Get the original bitmap object.
         Bitmap originalBitmap = ((BitmapDrawable) drawable).getBitmap();
 
         // Calculate the top-left corner of the crop window relative to the ~original~ bitmap size.
-        float cropX = (bitmapLeft + Edge.LEFT.getCoordinate()) / scaleX;
-        float cropY = (bitmapTop + Edge.TOP.getCoordinate()) / scaleY;
+//        float cropX = (bitmapLeft + Edge.LEFT.getCoordinate()) / scaleX;
+//        float cropY = (bitmapTop + Edge.TOP.getCoordinate()) / scaleY;
+        float cropX = (Edge.LEFT.getCoordinate() - transX) / scaleX;
+        float cropY = (Edge.TOP.getCoordinate() - transY) / scaleY;
 
         // Calculate the crop window size relative to the ~original~ bitmap size.
         // Make sure the right and bottom edges are not outside the ImageView bounds (this is just to address rounding discrepancies).
